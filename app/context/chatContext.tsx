@@ -58,8 +58,12 @@ export const ChatContextProvider = ({
   const deleteChat = async (chatId: string) => {
     if (!userid) return;
 
-    await fetch(`/api/chats/${chatId}`, {
+    await fetch(`/api/chat/deleteChat`, {
       method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body : JSON.stringify({ userid, chatId }),
     });
 
     if (currentChatId === chatId) {

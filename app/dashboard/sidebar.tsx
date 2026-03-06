@@ -16,8 +16,7 @@ export const SideBar = ({
   pdfUploaded,
 }: SideBarProps) => {
   const { userid , userName } = useAuth();
-  const { chats, createNewChat, currentChatId, setCurrentChatId, deleteChat } =
-    useChat();
+  const { chats, createNewChat, currentChatId, setCurrentChatId, deleteChat } = useChat();
 
   const { loadMessages } = useChat();
 
