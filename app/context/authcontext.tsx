@@ -53,8 +53,8 @@ export const AuthContextProvider = ({
       });
 
       const data = await response.json();
-      console.log({ "data": data, "username": data.username })
-      setuserName(data.username)
+      console.log({ data: data, username: data.username });
+      setuserName(data.username);
       console.log(data);
 
       if (!response.ok) {
@@ -103,7 +103,7 @@ export const AuthContextProvider = ({
           const response = await fetch("/api/auth/me", {
             method: "POST",
             headers: {
-              "Content-Type": "application/json"
+              "Content-Type": "application/json",
             },
             body: JSON.stringify({ userid: user.uid }),
           });
@@ -128,7 +128,9 @@ export const AuthContextProvider = ({
   const isLoggedIn = currentUser ? true : false;
 
   return (
-    <AuthContext.Provider value={{ login, signup, logout, isLoggedIn, userid, userName }}>
+    <AuthContext.Provider
+      value={{ login, signup, logout, isLoggedIn, userid, userName }}
+    >
       {children}
     </AuthContext.Provider>
   );

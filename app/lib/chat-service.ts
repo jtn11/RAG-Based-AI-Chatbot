@@ -3,7 +3,11 @@ import { FieldValue } from "firebase-admin/firestore";
 
 const db = getAdminDb();
 export async function createChat(userId: string, initialMessage?: string) {
-  const title = initialMessage ? (initialMessage.length > 30 ? initialMessage.substring(0, 30) + "..." : initialMessage) : "New Chat";
+  const title = initialMessage
+    ? initialMessage.length > 30
+      ? initialMessage.substring(0, 30) + "..."
+      : initialMessage
+    : "New Chat";
 
   const chatRef = await db
     .collection("users")

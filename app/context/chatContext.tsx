@@ -63,7 +63,7 @@ export const ChatContextProvider = ({
       headers: {
         "Content-Type": "application/json",
       },
-      body : JSON.stringify({ userid, chatId }),
+      body: JSON.stringify({ userid, chatId }),
     });
 
     if (currentChatId === chatId) {
@@ -77,7 +77,7 @@ export const ChatContextProvider = ({
   useEffect(() => {
     if (!userid) return;
     refreshChats();
-  }, [userid , currentChatId]);
+  }, [userid, currentChatId]);
 
   useEffect(() => {
     if (!currentChatId) {
