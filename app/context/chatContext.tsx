@@ -14,6 +14,7 @@ interface ChatContextTypes {
   loadMessages: (chatId: string) => Promise<void>;
   deleteChat: (chatId: string) => void;
   isRagActive: boolean;
+  activeDocumentName: string;
 }
 
 const ChatContext = createContext<ChatContextTypes | undefined>(undefined);
@@ -28,7 +29,8 @@ export const ChatContextProvider = ({
   const [chats, setChats] = useState<ChatMeta[]>([]);
   const [currentChatId, setCurrentChatId] = useState<string | null>(null);
   const [messages, setMessages] = useState<Message[]>([]);
-  const [isRagActive , setIsRagActive] = useState<boolean>(false);
+  const [isRagActive, setIsRagActive] = useState<boolean>(false);
+  const [activeDocumentName, setActiveDocumentName] = useState<string>("");
 
   const refreshChats = async () => {
     if (!userid) {
@@ -52,11 +54,14 @@ export const ChatContextProvider = ({
     console.log("Messages from /api/messages", data.messages);
     setMessages(data.messages || []);
     setIsRagActive(data.isRagActive);
+    setActiveDocumentName(data.activeDocumentName || "");
   };
 
   const createNewChat = () => {
     setCurrentChatId(null);
     setMessages([]);
+    setIsRagActive(false);
+    setActiveDocumentName("");
   };
 
   const deleteChat = async (chatId: string) => {
@@ -73,6 +78,8 @@ export const ChatContextProvider = ({
     if (currentChatId === chatId) {
       setCurrentChatId(null);
       setMessages([]);
+      setIsRagActive(false);
+      setActiveDocumentName("");
     }
 
     refreshChats();
@@ -104,6 +111,7 @@ export const ChatContextProvider = ({
         createNewChat,
         deleteChat,
         isRagActive,
+        activeDocumentName,
       }}
     >
       {children}

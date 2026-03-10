@@ -17,6 +17,7 @@ export async function POST(req: NextRequest) {
     .get();
 
   const isRagActive = chatDoc.data()?.isRagActive || false;
+  const activeDocumentName = chatDoc.data()?.activeDocumentName || "";
 
   const messagesSnapshot = await db
     .collection("users")
@@ -32,5 +33,5 @@ export async function POST(req: NextRequest) {
     ...doc.data(),
   }));
 
-  return NextResponse.json({ messages, isRagActive });
+  return NextResponse.json({ messages, isRagActive, activeDocumentName });
 }
