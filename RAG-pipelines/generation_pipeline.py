@@ -1,6 +1,7 @@
 import os
 from dotenv import load_dotenv
 from groq import Groq
+from typing import List
 
 # Load environment variables once
 load_dotenv()
@@ -9,7 +10,7 @@ load_dotenv()
 client = Groq(api_key=os.getenv("GROQ_API_KEY"))
 
 
-def build_rag_prompt(query: str, chunks: list[str]) -> str:
+def build_rag_prompt(query: str, chunks: List[str]) -> str:
     """
     Build a grounded RAG prompt from retrieved document chunks.
     """
@@ -40,7 +41,7 @@ Answer:
 """.strip()
 
 
-def generate_answer(query: str, chunks: list[str]) -> str:
+def generate_answer(query: str, chunks: List[str]) -> str:
     """
     Generate a grounded answer using Groq + retrieved chunks.
     """

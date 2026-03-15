@@ -1,5 +1,7 @@
 import os
 import re
+import requests
+import io
 from langchain_text_splitters import CharacterTextSplitter
 from langchain_chroma import Chroma
 from dotenv import load_dotenv
@@ -12,8 +14,8 @@ load_dotenv()
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 
-def extract_text_from_pdf(pdf_path: str) -> str:
-    reader = PdfReader(pdf_path)
+def extract_text_from_pdf(pdf_source) -> str:
+    reader = PdfReader(pdf_source)
     text = ""
     for page in reader.pages:
         text += (page.extract_text() or "") + "\n"
@@ -80,15 +82,17 @@ def create_vector_store(chunks, persist_directory):
     print(f"Vector store created and saved to {persist_directory}")
     return vectorstore
 
-def run_ingestion(file_path , user_id , chat_id):
+def run_ingestion(file_url, user_id, chat_id):
     print("=== RAG Ingestion Pipeline ===")
 
-    print(f"Extracting text from: {file_path}")
+    print(f"Downloading and extracting text from: {file_url}")
 
-    text = extract_text_from_pdf(file_path)
+    response = requests.get(file_url)
+    response.raise_for_status()
+    pdf_stream = io.BytesIO(response.content)
+
+    text = extract_text_from_pdf(pdf_stream)
     clean_text = normalize_extracted_text(text)
-
-    # docs_path = os.path.join(BASE_DIR, "docs", user_id, chat_id)
 
     persist_directory = os.path.join(
     BASE_DIR,
@@ -110,4 +114,6 @@ def run_ingestion(file_path , user_id , chat_id):
 
 # CLI support (optional but correct)
 if __name__ == "__main__":
-    run_ingestion()
+    # example usage
+    # run_ingestion("http://example.com/file.pdf", "user_123", "chat_456")
+    pass

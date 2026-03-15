@@ -5,6 +5,7 @@ export function getAdminApp() {
   if (!admin.apps.length) {
     admin.initializeApp({
       credential: admin.credential.cert(serviceAccount as admin.ServiceAccount),
+      storageBucket: "chatbot-ai-2e002.firebasestorage.app",
     });
   }
 
@@ -17,4 +18,8 @@ export function getAdminDb() {
 
 export function getAdminAuth() {
   return getAdminApp().auth();
+}
+
+export function getAdminStorage() {
+  return getAdminApp().storage();
 }

@@ -32,17 +32,17 @@ class QueryRequest(BaseModel):
     is_pdf_uploaded : bool
 
 class IngestRequest(BaseModel):
-    filePath: str
+    fileUrl: str
     userId: str
     chatId: str
 
 @app.post("/ingest")
 def ingest(req: IngestRequest):
     """
-    Ingest a document (PDF already saved on disk).
+    Ingest a document from a URL.
     This runs chunking + embedding and stores vectors.
     """
-    run_ingestion(req.filePath , req.userId , req.chatId)
+    run_ingestion(req.fileUrl, req.userId, req.chatId)
     return {"status": "ingestion completed"}
 
 
