@@ -1,7 +1,7 @@
 {
-    "python.defaultInterpreterPath": "${workspaceFolder}/RAG-pipelines/venv/bin/python",
-    "python.analysis.extraPaths": [
-        "${workspaceFolder}/RAG-pipelines",
-        "${workspaceFolder}/RAG-pipelines/venv/lib/python3.13/site-packages"
-    ]
+  "python.defaultInterpreterPath": "${workspaceFolder}/RAG-pipelines/venv/bin/python",
+  "python.analysis.extraPaths": [
+    "${workspaceFolder}/RAG-pipelines",
+    "${workspaceFolder}/RAG-pipelines/venv/lib/python3.13/site-packages"
+  ]
 }

@@ -14,7 +14,8 @@ export const UploadDocument = ({
   pdfUploaded,
   userid,
 }: UploadDocumentProps) => {
-  const { currentChatId, setCurrentChatId, isRagActive, activeDocumentName } = useChat();
+  const { currentChatId, setCurrentChatId, isRagActive, activeDocumentName } =
+    useChat();
   const [pdfloading, setpdfloading] = useState(false);
 
   const handleUpload = async () => {
@@ -59,7 +60,12 @@ export const UploadDocument = ({
         (pdfUploaded || isRagActive) && (
           <div className="mt-4 bg-gray-800 rounded-lg p-3">
             <div className="flex items-center justify-between text-sm">
-              <span className="text-sm truncate mr-2" title={activeDocumentName || "Document"}>{activeDocumentName || "Document"}</span>
+              <span
+                className="text-sm truncate mr-2"
+                title={activeDocumentName || "Document"}
+              >
+                {activeDocumentName || "Document"}
+              </span>
 
               <button
                 onClick={handleDelete}
