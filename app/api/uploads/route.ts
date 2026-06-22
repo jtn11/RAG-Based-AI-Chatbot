@@ -1,7 +1,9 @@
+import fs from "fs";
+import path from "path";
 import crypto from "crypto";
 import { NextResponse } from "next/server";
 import { createChat } from "@/app/lib/chat-service";
-import { getAdminDb, getAdminStorage } from "@/firebase/firebase-admin";
+import { getAdminDb } from "@/firebase/firebase-admin";
 import { FieldValue } from "firebase-admin/firestore";
 
 export async function POST(req: Request) {
@@ -23,29 +25,28 @@ export async function POST(req: Request) {
 
     const bytes = await file.arrayBuffer();
     const buffer = Buffer.from(bytes);
-    const adminStorage = getAdminStorage(); 
 
-    // Upload to Firebase Storage
-    const safeName = `${userId}/${chatId}/${crypto.randomUUID()}.pdf`;
-    const bucket = adminStorage.bucket("chatbot-ai-2e002.firebasestorage.app");
-    const fileRef = bucket.file(`uploads/${safeName}`);
+    // Save PDF locally to the public directory
+    const fileUUID = crypto.randomUUID();
+    const relativePath = `uploads/${userId}/${chatId}/${fileUUID}.pdf`;
+    const localPath = path.join(process.cwd(), "public", relativePath);
 
-    await fileRef.save(buffer, {
-      metadata: {
-        contentType: file.type,
-      },
-    });
+    // Ensure the directory exists
+    fs.mkdirSync(path.dirname(localPath), { recursive: true });
 
-    // Make the file public or generate a signed URL
-    // Actually, making it public or generating a long-lived signed URL allows the python backend to read it
-    await fileRef.makePublic();
-    const fileUrl = fileRef.publicUrl();
+    // Write the buffer to disk
+    fs.writeFileSync(localPath, buffer);
+
+    // Construct the public URL serving the local file
+    const host = req.headers.get("host") || "localhost:3000";
+    const protocol = req.headers.get("x-forwarded-proto") || "http";
+    const fileUrl = `${protocol}://${host}/${relativePath}`;
 
     const backendUrl = process.env.BACKEND_API_URL || "http://localhost:8000";
     await fetch(`${backendUrl}/ingest`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ fileUrl, userId, chatId }), // pass the URL instead of filePath
+      body: JSON.stringify({ fileUrl, userId, chatId }),
     });
 
     const db = getAdminDb();
@@ -58,7 +59,7 @@ export async function POST(req: Request) {
       .set(
         {
           activeDocumentName: file.name,
-          storedFileName: safeName,
+          storedFileName: relativePath,
           isRagActive: true,
           updatedAt: FieldValue.serverTimestamp(),
         },

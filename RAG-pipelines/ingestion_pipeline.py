@@ -22,8 +22,6 @@ def extract_text_from_pdf(pdf_source) -> str:
     return text
 
 def normalize_extracted_text(text: str) -> str:
-    text = re.sub(r'(?<=\w)\s(?=\w)', '', text)
-
     # Normalize excessive whitespace
     text = re.sub(r'\n{3,}', '\n\n', text)
     text = re.sub(r'[ \t]{2,}', ' ', text)
