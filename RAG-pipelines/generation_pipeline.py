@@ -41,6 +41,9 @@ Answer:
 """.strip()
 
 
+MODEL_NAME = os.getenv("GROQ_MODEL", "groq/compound-mini")
+
+
 def generate_answer(query: str, chunks: List[str]) -> str:
     """
     Generate a grounded answer using Groq + retrieved chunks.
@@ -51,7 +54,7 @@ def generate_answer(query: str, chunks: List[str]) -> str:
     prompt = build_rag_prompt(query, chunks)
 
     response = client.chat.completions.create(
-       model="llama-3.1-8b-instant",
+        model=MODEL_NAME,
         messages=[
             {"role": "user", "content": prompt}
         ],
@@ -67,7 +70,7 @@ def generate_llm_answer(query: str) -> str:
     Normal conversational LLM call (no RAG).
     """
     response = client.chat.completions.create(
-        model="llama-3.1-8b-instant",
+        model=MODEL_NAME,
         messages=[
             {
                 "role": "system",

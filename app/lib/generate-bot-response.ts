@@ -6,7 +6,11 @@ export async function GenerateBotResponse(
   finalChatId: string,
 ) {
   try {
-    const res = await fetch("http://localhost:8000/chat", {
+    const backendUrl =
+      process.env.BACKEND_API_URL ||
+      process.env.RAG_BACKEND_URL ||
+      "http://localhost:8000";
+    const res = await fetch(`${backendUrl}/chat`, {
       method: "POST",
       headers: {
         "content-type": "application/json",
