@@ -59,7 +59,7 @@ def generate_answer(query: str, chunks: List[str]) -> str:
             {"role": "user", "content": prompt}
         ],
         temperature=0.3,
-        max_tokens=512,
+        max_tokens=1024,
     )
 
     return response.choices[0].message.content.strip()
@@ -82,7 +82,7 @@ def generate_llm_answer(query: str) -> str:
             }
         ],
         temperature=0.7,
-        max_tokens=512,
+        max_tokens=1024,
     )
 
     return response.choices[0].message.content.strip()
