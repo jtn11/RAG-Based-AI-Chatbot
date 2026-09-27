@@ -32,7 +32,9 @@ export const ChatArea = ({
             >
               <div
                 className={`flex items-start space-x-3 max-w-[85%] md:max-w-[80%] ${
-                  message.sender === "user" ? "flex-row-reverse space-x-reverse" : ""
+                  message.sender === "user"
+                    ? "flex-row-reverse space-x-reverse"
+                    : ""
                 }`}
               >
                 <div
@@ -60,14 +62,44 @@ export const ChatArea = ({
                       <ReactMarkdown
                         remarkPlugins={[remarkGfm]}
                         components={{
-                          p: ({ children }) => <p className="mb-2.5 last:mb-0 leading-relaxed">{children}</p>,
-                          strong: ({ children }) => <strong className="font-semibold text-gray-900">{children}</strong>,
-                          h1: ({ children }) => <h1 className="text-base font-bold mt-4 mb-2 text-gray-900">{children}</h1>,
-                          h2: ({ children }) => <h2 className="text-sm font-bold mt-3 mb-1.5 text-gray-900">{children}</h2>,
-                          h3: ({ children }) => <h3 className="text-sm font-semibold mt-2 mb-1 text-gray-900">{children}</h3>,
-                          ul: ({ children }) => <ul className="list-disc pl-5 mb-2.5 space-y-1">{children}</ul>,
-                          ol: ({ children }) => <ol className="list-decimal pl-5 mb-2.5 space-y-1">{children}</ol>,
-                          li: ({ children }) => <li className="leading-relaxed">{children}</li>,
+                          p: ({ children }) => (
+                            <p className="mb-2.5 last:mb-0 leading-relaxed">
+                              {children}
+                            </p>
+                          ),
+                          strong: ({ children }) => (
+                            <strong className="font-semibold text-gray-900">
+                              {children}
+                            </strong>
+                          ),
+                          h1: ({ children }) => (
+                            <h1 className="text-base font-bold mt-4 mb-2 text-gray-900">
+                              {children}
+                            </h1>
+                          ),
+                          h2: ({ children }) => (
+                            <h2 className="text-sm font-bold mt-3 mb-1.5 text-gray-900">
+                              {children}
+                            </h2>
+                          ),
+                          h3: ({ children }) => (
+                            <h3 className="text-sm font-semibold mt-2 mb-1 text-gray-900">
+                              {children}
+                            </h3>
+                          ),
+                          ul: ({ children }) => (
+                            <ul className="list-disc pl-5 mb-2.5 space-y-1">
+                              {children}
+                            </ul>
+                          ),
+                          ol: ({ children }) => (
+                            <ol className="list-decimal pl-5 mb-2.5 space-y-1">
+                              {children}
+                            </ol>
+                          ),
+                          li: ({ children }) => (
+                            <li className="leading-relaxed">{children}</li>
+                          ),
                           blockquote: ({ children }) => (
                             <blockquote className="border-l-4 border-blue-500 pl-3 py-1 my-2 bg-blue-50/50 italic text-gray-700 rounded-r">
                               {children}
@@ -80,9 +112,19 @@ export const ChatArea = ({
                               </table>
                             </div>
                           ),
-                          thead: ({ children }) => <thead className="bg-gray-50">{children}</thead>,
-                          tbody: ({ children }) => <tbody className="divide-y divide-gray-100 bg-white">{children}</tbody>,
-                          tr: ({ children }) => <tr className="hover:bg-gray-50/70 transition-colors">{children}</tr>,
+                          thead: ({ children }) => (
+                            <thead className="bg-gray-50">{children}</thead>
+                          ),
+                          tbody: ({ children }) => (
+                            <tbody className="divide-y divide-gray-100 bg-white">
+                              {children}
+                            </tbody>
+                          ),
+                          tr: ({ children }) => (
+                            <tr className="hover:bg-gray-50/70 transition-colors">
+                              {children}
+                            </tr>
+                          ),
                           th: ({ children }) => (
                             <th className="px-3 py-2 text-left font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200 text-[11px]">
                               {children}
@@ -94,13 +136,19 @@ export const ChatArea = ({
                             </td>
                           ),
                           code: ({ className, children, ...props }) => {
-                            const isBlock = Boolean(className) || (typeof children === "string" && children.includes("\n"));
+                            const isBlock =
+                              Boolean(className) ||
+                              (typeof children === "string" &&
+                                children.includes("\n"));
                             return isBlock ? (
                               <pre className="bg-gray-900 text-gray-100 p-3 rounded-lg overflow-x-auto font-mono text-xs my-2">
                                 <code {...props}>{children}</code>
                               </pre>
                             ) : (
-                              <code className="bg-gray-100 text-pink-600 px-1.5 py-0.5 rounded font-mono text-xs font-medium" {...props}>
+                              <code
+                                className="bg-gray-100 text-pink-600 px-1.5 py-0.5 rounded font-mono text-xs font-medium"
+                                {...props}
+                              >
                                 {children}
                               </code>
                             );
