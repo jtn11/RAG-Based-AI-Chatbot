@@ -6,6 +6,7 @@ import {
   onAuthStateChanged,
   signInWithEmailAndPassword,
   signOut,
+  updateProfile,
 } from "firebase/auth";
 import { useRouter } from "next/navigation";
 import { useContext, useState, createContext, useEffect } from "react";
@@ -42,6 +43,14 @@ export const AuthContextProvider = ({
         password,
       );
       const user = userCred.user;
+      
+      try {
+        await updateProfile(user, { displayName: username });
+      } catch (profileError) {
+        console.warn("Could not update profile displayName:", profileError);
+      }
+
+      setuserName(username);
       const idToken = await user.getIdToken();
 
       const response = await fetch("/api/auth/signup", {
@@ -53,20 +62,19 @@ export const AuthContextProvider = ({
       });
 
       const data = await response.json();
-      console.log({ data: data, username: data.username });
-      setuserName(data.username);
-      console.log(data);
 
       if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || "Signup failed");
+        throw new Error(data.message || data.error || "Signup failed");
       }
 
-      // Sign in the user on the client side after successful creation
+      if (data.username) {
+        setuserName(data.username);
+      }
 
       router.push("/dashboard");
     } catch (error) {
-      console.log("Error", error);
+      console.error("Signup error:", error);
+      throw error;
     }
   };
 
@@ -77,7 +85,7 @@ export const AuthContextProvider = ({
 
   const createSession = async (user: any) => {
     const idToken = await user.getIdToken();
-    await fetch("api/auth/signin", {
+    await fetch("/api/auth/signin", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ idToken }),
@@ -87,8 +95,9 @@ export const AuthContextProvider = ({
   const login = async (email: string, password: string) => {
     const userCred = await signInWithEmailAndPassword(auth, email, password);
     await createSession(userCred.user);
-    const user = userCred.user;
-    console.log(user);
+    if (userCred.user.displayName) {
+      setuserName(userCred.user.displayName);
+    }
     router.push("/dashboard");
   };
 
@@ -98,6 +107,10 @@ export const AuthContextProvider = ({
 
       if (user) {
         setUserid(user.uid);
+        const initialName = user.displayName || (user.email ? user.email.split("@")[0] : null);
+        if (initialName) {
+          setuserName(initialName);
+        }
 
         try {
           const response = await fetch("/api/auth/me", {
@@ -108,10 +121,11 @@ export const AuthContextProvider = ({
             body: JSON.stringify({ userid: user.uid }),
           });
 
-          const data = await response.json();
-
-          if (response.ok && data.userDoc) {
-            setuserName(data.userDoc.username);
+          if (response.ok) {
+            const data = await response.json();
+            if (data?.userDoc?.username) {
+              setuserName(data.userDoc.username);
+            }
           }
         } catch (error) {
           console.error("Failed to fetch username:", error);
