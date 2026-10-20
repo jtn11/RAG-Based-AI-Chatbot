@@ -2,9 +2,9 @@ from fastapi import FastAPI
 from pydantic import BaseModel
 from dotenv import load_dotenv
 from fastapi.middleware.cors import CORSMiddleware
+from typing import Optional
 import shutil
 import os
-
 
 from ingestion_pipeline import BASE_DIR, run_ingestion
 from retrieval_pipeline import retrieve_chunks
@@ -13,6 +13,9 @@ from generation_pipeline import generate_llm_answer
 
 # Load environment variables once, globally
 load_dotenv()
+parent_env = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), ".env")
+if os.path.exists(parent_env):
+    load_dotenv(parent_env)
 
 app = FastAPI()
 
@@ -26,10 +29,10 @@ app.add_middleware(
 
 class QueryRequest(BaseModel):
     query: str 
-    userId: str
-    chatId: str
-    is_rag_active : bool
-    is_pdf_uploaded : bool
+    userId: Optional[str] = ""
+    chatId: Optional[str] = ""
+    is_rag_active: bool = False
+    is_pdf_uploaded: bool = False
 
 class IngestRequest(BaseModel):
     fileUrl: str

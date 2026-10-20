@@ -39,7 +39,7 @@ export async function POST(req: NextRequest) {
       { fetchedChatid: chatDoc?.chatId },
     );
 
-    let botResponse;
+    let botResponse: string;
     try {
       botResponse = await GenerateBotResponse(
         message,
@@ -49,7 +49,12 @@ export async function POST(req: NextRequest) {
         finalChatId,
       );
     } catch (error) {
+      console.error("GenerateBotResponse error:", error);
       botResponse = "Sorry, something went wrong. Please try again.";
+    }
+
+    if (!botResponse || typeof botResponse !== "string") {
+      botResponse = "Sorry, something went wrong while generating the response.";
     }
 
     await saveMessage(userid, finalChatId, botResponse, "bot");
@@ -60,7 +65,10 @@ export async function POST(req: NextRequest) {
       reply: botResponse,
     });
   } catch (error) {
-    console.error(error);
-    return NextResponse.json({ error: error }, { status: 500 });
+    console.error("Chat route error:", error);
+    return NextResponse.json(
+      { error: "Failed to process chat message" },
+      { status: 500 },
+    );
   }
 }

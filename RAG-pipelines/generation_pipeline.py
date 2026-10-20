@@ -5,6 +5,9 @@ from typing import List
 
 # Load environment variables once
 load_dotenv()
+parent_env = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), ".env")
+if os.path.exists(parent_env):
+    load_dotenv(parent_env)
 
 # Initialize Groq client
 client = Groq(api_key=os.getenv("GROQ_API_KEY"))
@@ -41,7 +44,7 @@ Answer:
 """.strip()
 
 
-MODEL_NAME = os.getenv("GROQ_MODEL", "groq/compound-mini")
+MODEL_NAME = os.getenv("GROQ_MODEL", "openai/gpt-oss-120b")
 
 
 def generate_answer(query: str, chunks: List[str]) -> str:
@@ -53,36 +56,42 @@ def generate_answer(query: str, chunks: List[str]) -> str:
 
     prompt = build_rag_prompt(query, chunks)
 
-    response = client.chat.completions.create(
-        model=MODEL_NAME,
-        messages=[
-            {"role": "user", "content": prompt}
-        ],
-        temperature=0.3,
-        max_tokens=1024,
-    )
-
-    return response.choices[0].message.content.strip()
+    try:
+        response = client.chat.completions.create(
+            model=MODEL_NAME,
+            messages=[
+                {"role": "user", "content": prompt}
+            ],
+            temperature=0.3,
+            max_tokens=1024,
+        )
+        return response.choices[0].message.content.strip()
+    except Exception as e:
+        print("Error during generate_answer:", e)
+        return f"Error generating answer: {str(e)}"
 
 
 def generate_llm_answer(query: str) -> str:
     """
     Normal conversational LLM call (no RAG).
     """
-    response = client.chat.completions.create(
-        model=MODEL_NAME,
-        messages=[
-            {
-                "role": "system",
-                "content": "You are a helpful and intelligent AI assistant."
-            },
-            {
-                "role": "user",
-                "content": query
-            }
-        ],
-        temperature=0.7,
-        max_tokens=1024,
-    )
-
-    return response.choices[0].message.content.strip()
+    try:
+        response = client.chat.completions.create(
+            model=MODEL_NAME,
+            messages=[
+                {
+                    "role": "system",
+                    "content": "You are a helpful and intelligent AI assistant."
+                },
+                {
+                    "role": "user",
+                    "content": query
+                }
+            ],
+            temperature=0.7,
+            max_tokens=1024,
+        )
+        return response.choices[0].message.content.strip()
+    except Exception as e:
+        print("Error during generate_llm_answer:", e)
+        return f"Error generating answer: {str(e)}"

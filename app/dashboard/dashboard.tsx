@@ -70,23 +70,36 @@ export default function Dashboard() {
         }),
       });
 
-      if (!res.ok) throw new Error("API failed");
+      if (!res.ok) {
+        const errorData = await res.json().catch(() => ({}));
+        throw new Error(errorData.error || "Failed to get response from server");
+      }
 
       const data = await res.json();
       console.log("This is the data after /api/chat", data);
-      setCurrentChatId(data.chatId);
-      console.log("Data to see chatid", data);
+      if (data.chatId) {
+        setCurrentChatId(data.chatId);
+      }
 
       const botMessage: Message = {
         id: Date.now().toString(),
-        text: data.reply,
+        text: data.reply || "No response received.",
         sender: "bot",
         createdAt: new Date(),
       };
 
       setMessages((prev) => [...prev, botMessage]);
-    } catch (error) {
+    } catch (error: any) {
       console.error("Send error:", error);
+      const errorMessage: Message = {
+        id: Date.now().toString(),
+        text:
+          error?.message ||
+          "Could not get a response. Please ensure the backend is running.",
+        sender: "bot",
+        createdAt: new Date(),
+      };
+      setMessages((prev) => [...prev, errorMessage]);
     } finally {
       setIsTyping(false);
     }

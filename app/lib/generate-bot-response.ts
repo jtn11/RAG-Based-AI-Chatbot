@@ -23,10 +23,17 @@ export async function GenerateBotResponse(
         is_pdf_uploaded: pdfUploaded,
       }),
     });
+
+    if (!res.ok) {
+      const errorText = await res.text().catch(() => "");
+      console.error(`Backend returned HTTP ${res.status}:`, errorText);
+      return `Backend error (${res.status}): Unable to process the request.`;
+    }
+
     const data = await res.json();
-    return data.answer;
+    return data?.answer || "No response received from the assistant.";
   } catch (error) {
-    console.log("Chat Error", error);
-    return "Something went wrong.";
+    console.error("Chat Error:", error);
+    return "Unable to connect to the assistant backend. Please ensure the Python backend is running on port 8000.";
   }
 }
